@@ -7,9 +7,38 @@ the results of the scans, looking them up, and using the lookup results to updat
 a small music database. Designed for mobile usage (though it should be *functional*
 on desktop).
 
+## Aims
+
+### 1: Assess state of Web Components
+
+I have studiously ignored Web Components for a few years now. Is it possible to
+produce a functional, *maintainable*, reasonably complex application using them
+out-of-the-box, with no additional dependencies?
+
+I feel like the answer to this is "no", but worth a try (NOTE: move to solid-js
+should this become too onerous).
+
+### 2: Assess state of PWAs
+
+Is it possible to ship a funcitonal, maintainable and performant PWA, using only
+the available web platform APIs? Again, I feel like the answer sits somewhere
+in the area of "no", but at least should have something working on Android.
+
+### 3. Assess ergonomics of WebWorkers again (possibly...)
+
+Workers are a pain to deal with, and I'm not at all convinced by the RPC
+implmentations (*c.f.* Comlink) that make usage of workers simpler [in some ways].
+With this app, moving image processing off the main thread seems a reasonable
+things to do, and I want to test out that thesis. Also, moving the processing
+logic for querying external APIs & parsing the results & storing them in
+IndexedDB (and sync-ing that with a cloud store) seems an interesting avenue
+of exploration.
+
 ## Notes
 
 ### WC resources
+- [Handy custom elements' patterns](https://gist.github.com/WebReflection/ec9f6687842aa385477c4afca625bbf4)
+- [`handleEvent`](https://gist.github.com/WebReflection/35ca0e2ef2fb929143ea725f55bc0d63)
 - [Awesome web components](https://github.com/web-padawan/awesome-web-components)
 - [Web Components gold standard](https://github.com/webcomponents/gold-standard/wiki)
 
