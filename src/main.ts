@@ -1,5 +1,5 @@
 import { ebus, type PscanEvent } from "./event-bus.js";
-import { queryEan13 } from "./musicbrainz-facade.js"
+import { queryEan13, parseMusicBrainzRelease } from "./musicbrainz-facade.js"
 import { MEDIA_CONSTRAINTS } from "./shared.js";
 
 export class BarcodeLookup extends HTMLUListElement {
@@ -14,7 +14,8 @@ export class BarcodeLookup extends HTMLUListElement {
     let toPrint: string;
     try {
       const lookup = await queryEan13(code)
-      toPrint = JSON.stringify(lookup)
+      const parsed = parseMusicBrainzRelease(lookup)
+      toPrint = JSON.stringify(parsed)
     } catch (err) {
       toPrint = JSON.stringify(err)
     }
