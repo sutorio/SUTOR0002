@@ -1,13 +1,42 @@
-import { ebus } from "./event-bus.js";
+import { ebus, type PscanEvent } from "./event-bus.js";
+import { queryEan13 } from "./musicbrainz-facade.js"
 import { MEDIA_CONSTRAINTS } from "./shared.js";
+
+export class BarcodeLookup extends HTMLUListElement {
+  #lookupHandler = async (e: PscanEvent<"detectorsuccess">) => {
+    const containerEl = document.createElement("li")
+    const codeEl = document.createElement("span")
+    const resEl = document.createElement("span")
+    containerEl.appendChild(codeEl)
+    containerEl.appendChild(resEl)
+
+    const code = e.payload[0].rawValue
+    let toPrint: string;
+    try {
+      const lookup = await queryEan13(code)
+      toPrint = JSON.stringify(lookup)
+    } catch (err) {
+      toPrint = JSON.stringify(err)
+    }
+    codeEl.appendChild(document.createTextNode(code))
+    resEl.appendChild(document.createTextNode(toPrint))
+    super.appendChild(containerEl)
+  }
+
+  connectedCallback() {
+    ebus.addListener("detectorsuccess", this.#lookupHandler)
+  }
+}
+
+customElements.define("barcode-lookup", BarcodeLookup, { extends: "ul" })
 
 /**
  * A `video` element used to display the stream from the device camera..
  */
 export class CameraStream extends HTMLVideoElement {
   connectedCallback() {
-    super.muted = true;
-    super.autoplay = true;
+    super.setAttribute("autoplay", "");
+    super.setAttribute("muted", "");
     navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS)
       .then((stream) => {
         super.srcObject = stream;
@@ -27,10 +56,28 @@ customElements.define("camera-stream", CameraStream, { extends: "video" })
  * On detection of barcodes, the current frame is drawn to a `canvas` element.
  * This still frame can then have the area containing the detected highlighted.
  */
-// export class ResultSurface extends HTMLCanvasElement {
-//   connectedCallback() {
-//   }
-// }
+export class ResultFrame extends HTMLCanvasElement {
+  #renderFrame = (e: PscanEvent<"framecaptured">) => {
+    super.width = e.payload.width
+    super.height = e.payload.height
+    super.getContext("bitmaprenderer")?.transferFromImageBitmap(e.payload)
+  }
+
+  #clearFrame = () => {
+    super.width = 0
+    super.height = 0
+  }
+
+  connectedCallback() {
+    this.#clearFrame()
+
+
+    ebus.addListener("framecaptured", this.#renderFrame)
+    ebus.addListener("startscanning", this.#clearFrame)
+  }
+}
+
+customElements.define("result-frame", ResultFrame, { extends: "canvas" })
 
 type ScanInitialiserState =
   | "loading" // The scanner logic is intialising
@@ -161,6 +208,7 @@ export class ScanTerminator extends HTMLButtonElement {
 
     super.addEventListener("click", (_) => {
       ebus.dispatch("stopscanning")
+      super.setAttribute("disabled", "")
     })
 
     ebus.addListener("startscanning", (_) => {

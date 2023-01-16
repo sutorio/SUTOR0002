@@ -11,8 +11,9 @@ export interface PscanEventMap {
   "stopscanning": undefined,
 }
 
-type PscanEventType = keyof PscanEventMap
-type PscanEventPayload<T extends PscanEventType> = PscanEventMap[T]
+export type PscanEventType = keyof PscanEventMap
+export type PscanEventPayload<T extends PscanEventType> = PscanEventMap[T]
+export type PscanEventHandler<T extends PscanEventType> = (e: PscanEvent<T>) => void
 
 
 export class PscanEvent<T extends PscanEventType> extends Event {
@@ -27,7 +28,7 @@ export class PscanEvent<T extends PscanEventType> extends Event {
 class EventBus<T extends PscanEventType> extends EventTarget {
   dispatch(type: T, payload?: PscanEventPayload<T>) {
     const e = new PscanEvent(type, payload)
-    console.log("Dispatched event!", e)
+    console.log(`Pscan Event: ${type}`, e)
     this.dispatchEvent(e)
   }
 
