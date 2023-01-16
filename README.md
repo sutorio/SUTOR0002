@@ -20,7 +20,7 @@ should this become too onerous).
 
 ### 2: Assess state of PWAs
 
-Is it possible to ship a funcitonal, maintainable and performant PWA, using only
+Is it possible to ship a functional, maintainable and performant PWA, using only
 the available web platform APIs? Again, I feel like the answer sits somewhere
 in the area of "no", but at least should have something working on Android.
 
@@ -39,6 +39,7 @@ of exploration.
 ### WC resources
 - [Handy custom elements' patterns](https://gist.github.com/WebReflection/ec9f6687842aa385477c4afca625bbf4)
 - [`handleEvent`](https://gist.github.com/WebReflection/35ca0e2ef2fb929143ea725f55bc0d63)
+- [Why I use Web Components](https://gist.github.com/WebReflection/71aed0c811e2e88e3cd3c647213f0e6c)
 - [Awesome web components](https://github.com/web-padawan/awesome-web-components)
 - [Web Components gold standard](https://github.com/webcomponents/gold-standard/wiki)
 
